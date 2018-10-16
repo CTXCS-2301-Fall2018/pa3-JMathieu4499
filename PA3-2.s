@@ -1,4 +1,6 @@
-@Vending machine code
+	@Vending machine code
+	@Jacob Mathieu
+	@OCt 15th
 
     .global main
     .extern printf
@@ -34,35 +36,37 @@ main:
     @Your modifications will begin at this point
 
     CMP R1, #1       @Check for "peanuts"
-    BEQ _peanut      @If user entered 1 goto _peanuts
+    MOVEQ R3, #75      @Move 75 cents into R3
+    
     CMP R1, #2       @Check for "chocolate"
-    BEQ _choc        @If user entered 2 goto _choc
+    MOVEQ R3, #125     @Move 125 cents into R3
+    
     CMP R1, #3       @Check for "pretzels"
-    BEQ _pretzel     @If user entered 3 goto _pretzel
-    LDR R0, =msg7    @If we get here user entered
-                     @an illegal selection so print
-                     @error message and terminate
-    BL printf
-    MOV R7, #1
-    SWI #0           @Terminate, error condition
-_peanut:
-    MOV R3, #75      @Move 75 cents into R3
-    BAL _compute
-_choc:
-    MOV R3, #125     @Move 125 cents into R3
-    BAL _compute
-_pretzel:
-    MOV R3, #90      @Move 90 cents into R3
-_compute:
-    LDR R4, =quantity @Get address of var quantity
-    LDR R4, [R4]      @Value of quantity now in R4
-    MUL R1, R3, R4    @Multiply number of cents times quantity
-                      @and put result in R1
-    LDR R0, =msg6     @Final message
-    BL printf
-    MOV R7, #1        @Normal exit
-    SWI #0
+    MOVEQ R3, #90      @Move 90 cents into R3
 
+_compute:	
+  LDR R4, =quantity @Get address of var quantity
+    LDR R4, [R4]      @Value of quantity now in R4
+
+	LDR R0, =msg6
+
+	
+	CMP R1, #3  @comparing using number 3 as comparing number
+	LDRGT R0, =msg7 @if here the value entered was invalid
+
+	CMP R1, #1
+   LDRLT R0, =msg7    @If we get here user entered
+                     @an illegal selection so print
+        @error message and terminate
+
+	MUL R1, R3, R4    @Multiply number of cents times quantity
+	BL printf
+    MOV R7, #1
+	
+  
+        MOV R7, #1
+	SWI #0
+	
 .data
 select: .word 0
 quantity: .word 0
